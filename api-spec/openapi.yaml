@@ -1,0 +1,520 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: invoices
+    description: Invoice review and approval
+  - name: activity
+    description: Audit activity
+  - name: hub
+    description: Simulated Orbyte hub
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /users:
+    get:
+      operationId: listUsers
+      tags: [hub]
+      summary: List simulated hub users
+      responses:
+        "200":
+          description: Users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HubUser"
+  /summary:
+    get:
+      operationId: getSummary
+      tags: [invoices]
+      summary: Get dashboard summary for current role
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceSummary"
+  /settings/ocr:
+    get:
+      operationId: getOcrSettings
+      tags: [hub]
+      summary: Get OCR mode and live service readiness
+      responses:
+        "200":
+          description: Current OCR configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OcrSettings"
+    put:
+      operationId: updateOcrSettings
+      tags: [hub]
+      summary: Change the workspace OCR mode as owner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OcrModeInput"
+      responses:
+        "200":
+          description: Updated OCR configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OcrSettings"
+        "403":
+          description: Only the owner can change settings
+  /invoices:
+    get:
+      operationId: listInvoices
+      tags: [invoices]
+      summary: List invoices with sensitive values masked
+      responses:
+        "200":
+          description: Invoice list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InvoiceListItem"
+  /invoices/upload:
+    post:
+      operationId: uploadInvoice
+      tags: [invoices]
+      summary: Upload and encrypt an invoice file
+      responses:
+        "201":
+          description: Created invoice
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadInvoiceResult"
+  /invoices/{invoiceId}:
+    parameters:
+      - $ref: "#/components/parameters/InvoiceId"
+    get:
+      operationId: getInvoice
+      tags: [invoices]
+      summary: Get invoice details with sensitive fields masked
+      responses:
+        "200":
+          description: Invoice
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceDetail"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      operationId: updateInvoice
+      tags: [invoices]
+      summary: Update invoice fields
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvoiceUpdateInput"
+      responses:
+        "200":
+          description: Updated invoice
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceDetail"
+  /invoices/{invoiceId}/reveal:
+    parameters:
+      - $ref: "#/components/parameters/InvoiceId"
+    post:
+      operationId: revealInvoiceField
+      tags: [invoices]
+      summary: Reveal one sensitive value to an authorized reviewer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RevealFieldInput"
+      responses:
+        "200":
+          description: Revealed field
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RevealedField"
+        "403":
+          description: Only accountants and owners may reveal sensitive fields
+  /invoices/{invoiceId}/file:
+    parameters:
+      - $ref: "#/components/parameters/InvoiceId"
+    get:
+      operationId: getInvoiceFile
+      tags: [invoices]
+      summary: Stream an authorized invoice file
+      responses:
+        "200":
+          description: Decrypted file stream for an authorized user
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /invoices/{invoiceId}/submit:
+    parameters:
+      - $ref: "#/components/parameters/InvoiceId"
+    post:
+      operationId: submitInvoice
+      tags: [invoices]
+      summary: Submit an invoice for review
+      responses:
+        "200":
+          description: Updated invoice
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceDetail"
+  /invoices/{invoiceId}/send-back:
+    parameters:
+      - $ref: "#/components/parameters/InvoiceId"
+    post:
+      operationId: sendBackInvoice
+      tags: [invoices]
+      summary: Send an invoice back to staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvoiceCommentInput"
+      responses:
+        "200":
+          description: Updated invoice
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceDetail"
+  /invoices/{invoiceId}/pass-to-owner:
+    parameters:
+      - $ref: "#/components/parameters/InvoiceId"
+    post:
+      operationId: passInvoiceToOwner
+      tags: [invoices]
+      summary: Pass an invoice to the owner for final approval
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvoiceCommentInput"
+      responses:
+        "200":
+          description: Updated invoice
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceDetail"
+  /invoices/{invoiceId}/approve:
+    parameters:
+      - $ref: "#/components/parameters/InvoiceId"
+    post:
+      operationId: approveInvoice
+      tags: [invoices]
+      summary: Approve an invoice as owner
+      responses:
+        "200":
+          description: Updated invoice
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceDetail"
+  /invoices/{invoiceId}/reject:
+    parameters:
+      - $ref: "#/components/parameters/InvoiceId"
+    post:
+      operationId: rejectInvoice
+      tags: [invoices]
+      summary: Reject an invoice as owner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvoiceCommentInput"
+      responses:
+        "200":
+          description: Updated invoice
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceDetail"
+  /invoices/{invoiceId}/activity:
+    parameters:
+      - $ref: "#/components/parameters/InvoiceId"
+    get:
+      operationId: getInvoiceActivity
+      tags: [activity]
+      summary: Get invoice activity history
+      responses:
+        "200":
+          description: Activity list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityEntry"
+  /activity:
+    get:
+      operationId: getActivity
+      tags: [activity]
+      summary: Get recent app activity
+      responses:
+        "200":
+          description: Activity list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityEntry"
+  /records:
+    get:
+      operationId: getApprovedRecords
+      tags: [invoices]
+      summary: Get approved records
+      responses:
+        "200":
+          description: Approved records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InvoiceListItem"
+  /exports/{format}:
+    parameters:
+      - name: format
+        in: path
+        required: true
+        schema:
+          type: string
+          enum: [csv, json]
+    get:
+      operationId: exportRecords
+      tags: [invoices]
+      summary: Export approved records as owner
+      responses:
+        "200":
+          description: Export file
+          content:
+            text/csv:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+        "403":
+          description: Only owners may export
+components:
+  parameters:
+    InvoiceId:
+      name: invoiceId
+      in: path
+      required: true
+      schema:
+        type: string
+  responses:
+    NotFound:
+      description: Invoice not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessage"
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    ErrorMessage:
+      type: object
+      properties:
+        error: { type: string }
+      required: [error]
+    HubUser:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        role:
+          type: string
+          enum: [Staff, Accountant, Owner]
+      required: [id, name, role]
+    InvoiceSummary:
+      type: object
+      properties:
+        total: { type: integer }
+        inReview: { type: integer }
+        awaitingApproval: { type: integer }
+        approved: { type: integer }
+        needsFixes: { type: integer }
+        readyRecords: { type: integer }
+        pendingForRole: { type: integer }
+      required: [total, inReview, awaitingApproval, approved, needsFixes, readyRecords, pendingForRole]
+    OcrSettings:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum: [live, cached]
+        liveConfigured: { type: boolean }
+      required: [mode, liveConfigured]
+    OcrModeInput:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum: [live, cached]
+      required: [mode]
+    InvoiceListItem:
+      type: object
+      properties:
+        id: { type: string }
+        supplier: { type: string }
+        supplierTinMasked: { type: string }
+        invoiceNumberMasked: { type: string }
+        date: { type: string }
+        currency: { type: string }
+        totalMasked: { type: string }
+        status:
+          type: string
+          enum: [Draft, "Needs fixes", "In review", "Awaiting approval", Approved, Rejected]
+        warnings: { type: integer }
+        fileName: { type: string }
+      required: [id, supplier, supplierTinMasked, invoiceNumberMasked, date, currency, totalMasked, status, warnings, fileName]
+    UploadInvoiceResult:
+      type: object
+      properties:
+        invoice:
+          $ref: "#/components/schemas/InvoiceListItem"
+        source:
+          type: string
+          enum: [live, cached, cached-fallback]
+      required: [invoice, source]
+    LineItem:
+      type: object
+      properties:
+        id: { type: string }
+        descriptionMasked: { type: string }
+        amountMasked: { type: string }
+        confidence:
+          type: string
+          enum: [High, Medium, Low]
+      required: [id, descriptionMasked, amountMasked, confidence]
+    InvoiceWarning:
+      type: object
+      properties:
+        code: { type: string }
+        severity:
+          type: string
+          enum: [error, warning]
+        message: { type: string }
+        field: { type: string }
+      required: [code, severity, message, field]
+    InvoiceDetail:
+      type: object
+      properties:
+        id: { type: string }
+        supplier: { type: string }
+        supplierTinMasked: { type: string }
+        invoiceNumberMasked: { type: string }
+        date: { type: string }
+        currency: { type: string }
+        subtotalMasked: { type: string }
+        taxMasked: { type: string }
+        totalMasked: { type: string }
+        lineItems:
+          type: array
+          items: { $ref: "#/components/schemas/LineItem" }
+        status:
+          type: string
+          enum: [Draft, "Needs fixes", "In review", "Awaiting approval", Approved, Rejected]
+        warnings:
+          type: array
+          items: { $ref: "#/components/schemas/InvoiceWarning" }
+        comment: { type: ["string", "null"] }
+        submittedBy: { type: ["string", "null"] }
+        fileName: { type: string }
+        mimeType: { type: string }
+      required: [id, supplier, supplierTinMasked, invoiceNumberMasked, date, currency, subtotalMasked, taxMasked, totalMasked, lineItems, status, warnings, fileName, mimeType]
+    ActivityEntry:
+      type: object
+      properties:
+        id: { type: string }
+        invoiceId: { type: ["string", "null"] }
+        actor: { type: string }
+        action: { type: string }
+        field: { type: ["string", "null"] }
+        createdAt: { type: string }
+      required: [id, actor, action, createdAt]
+    InvoiceUpdateInput:
+      type: object
+      properties:
+        supplierId: { type: string }
+        supplier: { type: string }
+        supplierTin: { type: string }
+        invoiceNumber: { type: string }
+        date: { type: string }
+        currency: { type: string }
+        subtotal: { type: number }
+        tax: { type: number }
+        total: { type: number }
+        lineItems:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string }
+              description: { type: string }
+              amount: { type: number }
+            required: [id]
+        reviewedWarningCodes:
+          type: array
+          items: { type: string }
+    RevealFieldInput:
+      type: object
+      properties:
+        field:
+          type: string
+      required: [field]
+    RevealedField:
+      type: object
+      properties:
+        field: { type: string }
+        value: { type: string }
+      required: [field, value]
+    InvoiceCommentInput:
+      type: object
+      properties:
+        comment: { type: string }
+
