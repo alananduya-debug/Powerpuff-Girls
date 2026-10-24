@@ -8,7 +8,7 @@
 
 | Field | Details |
 |---|---|
-| **Team Name** | Powerpuff Girls |
+| **Team Name** | The Powerpuff Girls |
 | **Team Domain** | Domain 2: Orbyte Smart SME Challenge (Less Busywork, Better Business) |
 | **SDG Track** | SDG 8: Decent Work and Economic Growth (targets 8.2 and 8.3); supporting SDG 9 |
 | **Team Leader** | Aisuluu Abdullaeva |
