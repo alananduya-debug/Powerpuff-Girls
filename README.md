@@ -23,7 +23,8 @@
 | Live Demo | https://invoice-assistant-workflow-fixes-and-demo.replit.app/settings |
 | RunPod Endpoint | Private (requires an API key); see `submission/RunPod Proof of Use.pdf` |
 | Slide Deck | https://www.canva.com/design/DAHY5GeAKRM/3WwtZlKP5aQZqOfBez-auw/edit |
-| Demo / Pitch Video | [link] |
+| Demo Video | https://youtu.be/b3M6lyyWtew |
+| Pitch Video | [link] |
 
 ---
 
