@@ -20,7 +20,6 @@
 | Resource | Link |
 |---|---|
 | GitHub Repository | https://github.com/alananduya-debug/Powerpuff-Girls |
-| Replit Project | [https://replit.com/@your-username/your-project] |
 | Live Demo | https://invoice-assistant-workflow-fixes-and-demo.replit.app/ |
 | RunPod Endpoint | Private (requires an API key); see `submission/RunPod Proof of Use.pdf` |
 | Slide Deck | https://canva.link/k9z6rvqfvqeflw8 |
