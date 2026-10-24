@@ -24,7 +24,7 @@
 | RunPod Endpoint | Private (requires an API key); see `submission/RunPod Proof of Use.pdf` |
 | Slide Deck | https://www.canva.com/design/DAHY5GeAKRM/3WwtZlKP5aQZqOfBez-auw/edit |
 | Demo Video | https://youtu.be/b3M6lyyWtew |
-| Pitch Video | [link] |
+| Pitch Video | https://youtu.be/zC3PUpVt2Iw?si=E4-Lp1nKWGR-Fs5J |
 
 ---
 
