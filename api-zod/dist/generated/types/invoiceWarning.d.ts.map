@@ -1,1 +1,0 @@
-{"version":3,"file":"invoiceWarning.d.ts","sourceRoot":"","sources":["../../../src/generated/types/invoiceWarning.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AACH,OAAO,KAAK,EAAE,sBAAsB,EAAE,MAAM,0BAA0B,CAAC;AAEvE,MAAM,WAAW,cAAc;IAC7B,IAAI,EAAE,MAAM,CAAC;IACb,QAAQ,EAAE,sBAAsB,CAAC;IACjC,OAAO,EAAE,MAAM,CAAC;IAChB,KAAK,EAAE,MAAM,CAAC;CACf"}

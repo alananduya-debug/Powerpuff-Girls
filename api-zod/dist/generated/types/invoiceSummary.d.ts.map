@@ -1,1 +1,0 @@
-{"version":3,"file":"invoiceSummary.d.ts","sourceRoot":"","sources":["../../../src/generated/types/invoiceSummary.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AAEH,MAAM,WAAW,cAAc;IAC7B,KAAK,EAAE,MAAM,CAAC;IACd,QAAQ,EAAE,MAAM,CAAC;IACjB,gBAAgB,EAAE,MAAM,CAAC;IACzB,QAAQ,EAAE,MAAM,CAAC;IACjB,UAAU,EAAE,MAAM,CAAC;IACnB,YAAY,EAAE,MAAM,CAAC;IACrB,cAAc,EAAE,MAAM,CAAC;CACxB"}
