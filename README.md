@@ -59,6 +59,26 @@ Invoice Assistant turns a supplier bill into a checked, approved and logged reco
 
 The app talks to the hub only through one adapter (`/server/hub-mock`) that provides users, roles, a supplier directory and an event feed (`invoice.approved`). In this prototype the hub is **simulated**; connecting to the live Orbyte hub is a configuration change. The workflow follows Orbyte's Submit, Review, Approve pattern, and the validation rules are configuration, so the same product can serve many SMEs.
 
+## How We Used Replit and RunPod
+
+### Replit (application and hosting)
+- **Development:** the whole app (React frontend, Node/Express backend, SQLite database, rules engine, role permissions, encryption and activity log) was built and run in a single Replit project. We used the Replit Agent to scaffold screens and features, then reviewed and tested each change ourselves.
+- **Hosting:** the app is deployed on Replit at the Live Demo link above.
+- **Secrets:** all keys (`ENCRYPTION_KEY`, `HMAC_KEY` and the RunPod values) are stored in Replit Secrets and are never committed to the repository.
+- **Data:** the database is seeded with synthetic invoices only.
+- **Proof of use:** deployment and AI credit usage screenshots are in `submission/Replit Proof of Use.pdf`.
+
+### RunPod (AI document reading)
+- **What runs there:** a serverless endpoint hosting an open vision-language model [model name, e.g. Qwen2.5-VL], which reads invoice images and returns structured JSON (supplier, invoice number, date, currency, line items, tax, total).
+- **How the app calls it:** the backend (`/server/ocr/extract.js`) sends the invoice image to the RunPod endpoint through an OpenAI-compatible API and parses the JSON reply. PDFs with embedded text are read directly; scanned PDFs are converted to images first.
+- **What AI does and doesn't do:** the model is used only to read documents. All checking (duplicates, arithmetic, tax, required fields) is done by plain, testable rules, and every approval is made by a person.
+- **Fallback:** if the endpoint is slow, unavailable or returns unreadable output, the app shows a friendly message and uses saved results (`OCR_MODE=cached`). Demo mode is labelled in the interface.
+- **Results so far:** [e.g. "Tested on N synthetic invoices in English and Chinese; M extracted correctly without edits." Delete this line if you haven't measured it.]
+- **Proof of use:** endpoint and GPU usage/billing screenshots are in `submission/RunPod Proof of Use.pdf`.
+
+### Built With
+React, Tailwind CSS, Node.js, Express, SQLite, Replit (development, Agent and hosting), RunPod Serverless with a vision-language model, GitHub.
+
 ## Impact and SDG
 
 - **SDG 8.2 / 8.3:** productivity through technology, and support for micro and small enterprises.
