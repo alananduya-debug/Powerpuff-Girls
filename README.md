@@ -19,7 +19,7 @@
 
 | Resource | Link |
 |---|---|
-| GitHub Repository | [https://github.com/your-username/your-repo] |
+| GitHub Repository | https://github.com/alananduya-debug/Powerpuff-Girls |
 | Replit Project | [https://replit.com/@your-username/your-project] |
 | Live Demo | https://invoice-assistant-workflow-fixes-and-demo.replit.app/ |
 | RunPod Endpoint | Private (requires an API key); see `submission/RunPod Proof of Use.pdf` |
@@ -104,7 +104,7 @@ npm run dev              # [replace with the actual start command from package.j
 
 The app runs fully without Runpod by using `OCR_MODE=cached`.
 
-**Tests:** `npm test` [adjust if different]
+**Tests:** `npm test` 
 
 ## Data and Privacy
 
@@ -139,5 +139,5 @@ The app runs fully without Runpod by using `OCR_MODE=cached`.
 
 ## License
 
-This project is licensed under the Apache- 2.0.(LICENSE).
+This project is licensed under the [Apache- 2.0.](LICENSE).
 
