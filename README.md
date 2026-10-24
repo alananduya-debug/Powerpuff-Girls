@@ -139,4 +139,5 @@ The app runs fully without Runpod by using `OCR_MODE=cached`.
 
 ## License
 
-[Add a license if your template includes one, for example Apache-2.0.]
+This project is licensed under the Apache- 2.0.(LICENSE).
+
